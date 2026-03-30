@@ -13,6 +13,10 @@ import os
 
 load_dotenv()  # this loads .env file
 
+DHIS2_GET_API_URL = os.getenv("DHIS2_GET_API_URL")
+DHIS2_GET_USER = os.getenv("DHIS2_GET_USER")
+DHIS2_GET_PASSWORD = os.getenv("DHIS2_GET_PASSWORD")
+
 SHARE_POINT_SITE_ID = os.getenv("SHARE_POINT_SITE_ID")
 SHARE_POINT_DRIVE_ID = os.getenv("SHARE_POINT_DRIVE_ID")
 
@@ -174,12 +178,62 @@ def complete_workflow_share_point():
     ensure_folder(child_path)
 
     print("-" * 60)
-    print("📋 STEP 3: Upload File")
+    #print("📋 STEP 3: Upload File")
 
     #file_path = "test.pdf"  # change to your file path
-    year_month_date = datetime.now().strftime("%Y-%m-%d")
+    #year_month_date = datetime.now().strftime("%Y-%m-%d")
+    #file_path = f"Accuity_{uin_code}_{year_month_date}.pdf"
 
-    file_path = f"Accuity_{uin_code}_{year_month_date}.pdf"
+
+    print("\n📋 STEP 3: Downlods file from source DHIS2")
+
+    tempEventUid = "AH9WpjR9duL"
+    tempDeUid = "R6nujxC6zLD"
+   
+    #pdf_url = "https://links.hispindia.org/ippf_uin/api/events/files?eventUid=AH9WpjR9duL&dataElementUid=R6nujxC6zLD"
+
+    session_get = requests.Session()
+    session_get.auth = (DHIS2_GET_USER, DHIS2_GET_PASSWORD)
+
+    file_download_url = (
+        f"{DHIS2_GET_API_URL}/events/files"
+        f"?eventUid={tempEventUid}"
+        f"&dataElementUid={tempDeUid}"
+    )
+    #pdf_url = "https://links.hispindia.org/ippf_uin/api/events/files?eventUid=AH9WpjR9duL&dataElementUid=R6nujxC6zLD"
+
+
+    file_resource_response = session_get.get(file_download_url)
+
+    #print("status_code:", file_resource_response.status_code)
+    #print("Content-Type:", file_resource_response.headers.get("Content-Type"))
+    #print("preview_response:", file_resource_response.text[:200])  # preview response
+
+    # Check response
+    if file_resource_response.status_code == 200:
+        print("PDF downloaded successfully")
+    else:
+        print("Failed:", file_resource_response.status_code)
+
+    #file_path = "downloaded_file.pdf"
+
+    #custom_file_name = "Accuity_IPPF-THA-009_2026-03-25.pdf"
+    # Create custom name
+    event_uid = "AH9WpjR9duL"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    date_and_time = datetime.now().strftime("%Y-%m-%d")
+    
+    file_path = f"Accuity_{uin_code}_{date_and_time}.pdf"
+
+    with open(file_path, "wb") as f:
+        f.write(file_resource_response.content)
+
+    print("Saved to:", file_path)
+
+    print("-" * 60)
+
+    print("\n📋 STEP 4: Upload Certificate in Microsoft Share Point in side folder ", child_path )
+    
     upload_file(child_path, file_path)
     #print("✅ Upload File Completed")
 
