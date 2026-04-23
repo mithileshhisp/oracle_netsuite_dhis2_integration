@@ -22,6 +22,8 @@ load_dotenv()  # this loads .env file
 #TOKEN_ID = "************"
 #TOKEN_SECRET = "*********"
 
+#signature_method='HMAC-SHA256',
+
 DHIS2_GET_API_URL = os.getenv("DHIS2_GET_API_URL")
 DHIS2_GET_USER = os.getenv("DHIS2_GET_USER")
 DHIS2_GET_PASSWORD = os.getenv("DHIS2_GET_PASSWORD")
@@ -186,11 +188,12 @@ def complete_workflow_example():
 
     print("\n📋 STEP 1: Downlods file from source DHIS2")
 
-    tempEventUid = "AH9WpjR9duL"
+    tempEventUid = "HEJ9jJPAS5y"
     tempDeUid = "R6nujxC6zLD"
    
     #pdf_url = "https://links.hispindia.org/ippf_uin/api/events/files?eventUid=AH9WpjR9duL&dataElementUid=R6nujxC6zLD"
-
+    #pdf_url = "https://links.hispindia.org/ippf_uin/api/events/files?eventUid=HEJ9jJPAS5y&dataElementUid=R6nujxC6zLD"
+    
     session_get = requests.Session()
     session_get.auth = (DHIS2_GET_USER, DHIS2_GET_PASSWORD)
 
@@ -199,8 +202,7 @@ def complete_workflow_example():
         f"?eventUid={tempEventUid}"
         f"&dataElementUid={tempDeUid}"
     )
-    #pdf_url = "https://links.hispindia.org/ippf_uin/api/events/files?eventUid=AH9WpjR9duL&dataElementUid=R6nujxC6zLD"
-
+    #pdf_url = "https://links.hispindia.org/ippf_uin/api/events/files?eventUid=HEJ9jJPAS5y&dataElementUid=R6nujxC6zLD"
 
     file_resource_response = session_get.get(file_download_url)
 
@@ -218,23 +220,28 @@ def complete_workflow_example():
 
     #custom_file_name = "Accuity_IPPF-THA-009_2026-03-25.pdf"
     # Create custom name
-    event_uid = "AH9WpjR9duL"
+    event_uid = "HEJ9jJPAS5y"
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     date_and_time = datetime.now().strftime("%Y-%m-%d")
     
+    '''
     file_path = f"Accuity_{uin_code}_{date_and_time}.pdf"
 
     with open(file_path, "wb") as f:
         f.write(file_resource_response.content)
 
     print("Saved to:", file_path)
+    '''
+
+    file_path = "Accuity_IPPF-THA-009_2026-04-13.pdf"
 
     print("-" * 60)
 
     print("\n📋 STEP 2: Upload Certificate in Oracle NetSuite")
     
     #pdf_file = "IPPF-THA-009_DHIS2.pdf"
-    
+    # file path in netsuite 
+    # Compliance-Documents > Accuity-Certificates search file name
     cert_result = upload_certificate(
         uin_code=uin_code,
         folder_id=FOLDER_ID,

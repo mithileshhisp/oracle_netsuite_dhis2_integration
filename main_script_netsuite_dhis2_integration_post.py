@@ -40,6 +40,60 @@ auth = OAuth1(
 
 url = f"{BASE_URL}/services/rest/record/v1/vendor"
 
+vendor_id = "43030"  # REQUIRED (internal ID)
+update_url = f"{BASE_URL}/services/rest/record/v1/vendor/{vendor_id}"
+
+
+response = requests.delete(
+    update_url,
+    auth=auth,
+    headers={
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+)
+print(response.status_code)
+print(response.text)
+
+
+
+# update vendor payload
+'''
+update_payload = {
+    "companyname": "Mithilesh Kumar Thakur TEST 20/04/2026",  # only if changing
+    
+    "legalName" : "Mithilesh Kumar Thakur",
+    "email": "mithilesh@test.com",
+    "phone": "9818966555",
+    "isinactive": False,
+
+    # custom fields
+    "custentity_2663_payment_method": True,
+    "custentity_2663_email_address_notif": "supplier@test.com",
+    "custentity_ippf_uin_number": "UIN-778899",
+
+    # references (only if changing)
+    "category": {"id": "39"},
+    "subsidiary": {"id": "33"},
+    "currency": {"id": "71"},
+    "payablesAccount": {"id": "3939"},
+    "custentity_jj_san_country_sup": {"id": "1"},
+    "custentity_jj_suo_reg": {"id": "45"}
+}
+
+response = requests.patch(
+    update_url,
+    auth=auth,
+    json=update_payload,
+    headers={
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+)
+
+print("Status:", response.status_code)
+print("Response:", response.text)
+'''
 '''
 payload = {
     "entityId": "SUPP1001",              # Supplier Code
@@ -50,29 +104,38 @@ payload = {
     "currency": {"id": "1"}              # Optional but often required
 }
 '''
+
+'''
+## new create payload
 payload = {
     #"entityId": "SUPP2001",
-    "companyname": "New Supplier Pvt Ltd",
+    "companyname": "Rajeev Ragta TEST 20/04/2026",
+    "legalName" : "Rajeev Ragta TEST",
+    "custentity_2663_payment_method" :True,
+    "isinactive": False,
     "category": {"id": "39"},
     "email": "supplier@test.com",
-    "phone": "9876543210",
+    "phone": "9818966555",
     "subsidiary": {"id": "33"},
     "custentity_jj_san_country_sup": {"id": "1"},
-    "custentity_2663_email_address_notif" : "supplier@test.com",
     "payablesAccount": {"id": "3939"},
     "currency" :  {"id": "71"},
-    #"defaultaddress" : "123 MG Road Mumbai 400001 INDIA",
+    "url" : "",
+    "custentity_jj_suo_reg" : {"id": "45"}, # Region code
+    "custentity_2663_email_address_notif":"supplier@test.com", #### mandatory
+    "custpage_eft_custrecord_2663_entity_bank_name" : "SBI",
+    "defaultaddress" : "123 MG Road Mumbai 400001 INDIA",
     "addressBook": {
         "items": [
             {
                 "defaultBilling": True,
                 "defaultShipping": True,
                 "addressBookAddress": {
-                    "addr1": "123 MG Road",
-                    "city": "Mumbai",
-                    "state": "MH",
-                    "zip": "400001",
-                    "country": {"id": "IN"}
+                    "addr1": "88/12 Rama IV Road, Khlong Toei, Bangkok 10110, Thailand",
+                    #"city": "Mumbai",
+                    #"state": "MH",
+                    #"zip": "400001",
+                    #"country": {"id": "IN"}
                 }
             }
         ]
@@ -81,6 +144,7 @@ payload = {
 }
 
 #print(" post start" )
+print("\n📋 STEP 1: Create Vendor in Oracle NetSuite")
 post_start = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 print(f"Post start : { post_start } " )
 print("-" * 50)
@@ -91,6 +155,8 @@ response = requests.post(
     headers={"Content-Type": "application/json",
              "Accept": "application/json"}
 )
+
+'''
 
 # https://4533524-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/41233
 # "entityId": "SUP8767 New Supplier Pvt Ltd",
@@ -527,5 +593,51 @@ vendor_internal_id = data.get("id")
 uin_number = data.get("custentity_ippf_uin_number")
 email = data.get("email")
 payables_account_id = data.get("payablesAccount", {}).get("id")
+
+'''
+
+
+''''
+update vendor details
+
+vendor_id = "12345"  # REQUIRED (internal ID)
+
+url = f"{BASE_URL}/services/rest/record/v1/vendor/{vendor_id}"
+
+update_payload = {
+    "companyname": "Rajeev Ragta TEST 20/04/2026",  # only if changing
+    "email": "supplier@test.com",
+    "phone": "9818966555",
+    "isinactive": False,
+
+    # custom fields
+    "custentity_2663_payment_method": True,
+    "custentity_2663_email_address_notif": "supplier@test.com",
+    "custentity_ippf_uin_number": "UIN-778899",
+
+    # references (only if changing)
+    "category": {"id": "39"},
+    "subsidiary": {"id": "33"},
+    "currency": {"id": "71"},
+    "payablesAccount": {"id": "3939"},
+    "custentity_jj_san_country_sup": {"id": "1"},
+    "custentity_jj_suo_reg": {"id": "45"}
+}
+
+response = requests.patch(
+    url,
+    auth=auth,
+    json=update_payload,
+    headers={
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+)
+
+print("Status:", response.status_code)
+print("Response:", response.text)
+
+
+
 
 '''

@@ -187,7 +187,7 @@ def complete_workflow_share_point():
 
     print("\n📋 STEP 3: Downlods file from source DHIS2")
 
-    tempEventUid = "AH9WpjR9duL"
+    tempEventUid = "HEJ9jJPAS5y"
     tempDeUid = "R6nujxC6zLD"
    
     #pdf_url = "https://links.hispindia.org/ippf_uin/api/events/files?eventUid=AH9WpjR9duL&dataElementUid=R6nujxC6zLD"
@@ -212,30 +212,34 @@ def complete_workflow_share_point():
     # Check response
     if file_resource_response.status_code == 200:
         print("PDF downloaded successfully")
+    
+        #file_path = "downloaded_file.pdf"
+
+        #custom_file_name = "Accuity_IPPF-THA-009_2026-03-25.pdf"
+        # Create custom name
+        event_uid = "HEJ9jJPAS5y"
+        date_and_time_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        date_and_time = datetime.now().strftime("%Y-%m-%d")
+        
+        file_path = f"Accuity_{uin_code}_{date_and_time}.pdf"
+
+        with open(file_path, "wb") as f:
+            f.write(file_resource_response.content)
+
+        print("Saved to:", file_path)
+
+        print("-" * 60)
+
+        print("\n📋 STEP 4: Upload Certificate in Microsoft Share Point in side folder ", child_path )
+        
+        upload_file(child_path, file_path)
+        #print("✅ Upload File Completed")
+    
     else:
-        print("Failed:", file_resource_response.status_code)
+        print("❌ Failed to Downlods file from source DHIS2:", file_resource_response.status_code)
+        print("❌ Failed: to report download from source dhis2", file_resource_response.text)
 
-    #file_path = "downloaded_file.pdf"
 
-    #custom_file_name = "Accuity_IPPF-THA-009_2026-03-25.pdf"
-    # Create custom name
-    event_uid = "AH9WpjR9duL"
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    date_and_time = datetime.now().strftime("%Y-%m-%d")
-    
-    file_path = f"Accuity_{uin_code}_{date_and_time}.pdf"
-
-    with open(file_path, "wb") as f:
-        f.write(file_resource_response.content)
-
-    print("Saved to:", file_path)
-
-    print("-" * 60)
-
-    print("\n📋 STEP 4: Upload Certificate in Microsoft Share Point in side folder ", child_path )
-    
-    upload_file(child_path, file_path)
-    #print("✅ Upload File Completed")
 
     print("WORKFLOW COMPLETE")
     print("✅" * 30)
