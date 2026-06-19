@@ -61,14 +61,19 @@ UPLOAD_CERT_URL = os.getenv("UPLOAD_CERT_URL")
 FOLDER_ID = os.getenv("FOLDER_ID")
 ARCHIVE_FOLDER_ID = os.getenv("ARCHIVE_FOLDER_ID")
 
-NETSUITE_ACCOUNT_ID = "4533524-sb1"
 
-RESTLET_URL = f"https://{NETSUITE_ACCOUNT_ID}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+
+#IPPF RL Supplier Bank Details Create UIN : https://4533524.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=1273&deploy=1 
+
+#RESTLET_URL = f"https://{NETSUITE_ACCOUNT_ID}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+RESTLET_URL = f"https://{ACCOUNT_ID}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+
 
 
 # Replace with your actual script and deploy IDs
-SCRIPT_ID = "1244"
-DEPLOY_ID = "1"
+#SCRIPT_ID = "****" ## netsuite sandbox
+SCRIPT_ID = "****" ## netsuite production
+DEPLOY_ID = "*"
 
 auth = OAuth1(
     CLIENT_KEY,
@@ -442,6 +447,8 @@ def get_tei_details(tei_get_url, session_get, ORGUNIT_UID, PROGRAM_UID, SEARCH_T
         teiattributesValue = tei_response_data.get('attributes',[])
         teis = tei_response_data.get('trackedEntityInstances', [])
 
+        print(f"trackedEntityInstances list Size {len(teis) }")
+        log_info(f"trackedEntityInstances list Size {len(teis) } ")
 
         if teis:
             for tei in teis:
@@ -777,6 +784,7 @@ def create_bank_details(vendor_internal_id,primary_bank_payload):
 
 
 def create_vendor_in_netsuite_and_update_dhis2(primary_bank_payload,
+    secondary_bank_1_payload, secondary_bank_2_payload,
     netsuite_payload, tei_uid, legal_name, tei_get_url, 
     session_get, attribute_id, event_get_url, latest_event_uin_control_uid, 
     dataElementUid,PROGRAM_UID,uin_code, file_upload_de_uid,tei ):
@@ -873,11 +881,19 @@ def create_vendor_in_netsuite_and_update_dhis2(primary_bank_payload,
             logging.info("EXAMPLE 2: Create Bank Details (With Optional Fields)")
             logging.info("=" * 60)
             print("=" * 60)
-        
-            result = create_bank_details(
-                vendor_internal_id,primary_bank_payload
-            )
 
+            if primary_bank_payload:
+                result_primary = create_bank_details(
+                    vendor_internal_id,primary_bank_payload
+                )
+            if secondary_bank_1_payload:
+                result_secondry_1 = create_bank_details(
+                    vendor_internal_id,secondary_bank_1_payload
+                )
+            if secondary_bank_2_payload:
+                result_secondry_2 = create_bank_details(
+                    vendor_internal_id,secondary_bank_2_payload
+                )
         logging.info("\n" + "=" * 60)
         logging.info("EXAMPLE 3: Get Bank Details")
         logging.info("=" * 60)
@@ -885,12 +901,12 @@ def create_vendor_in_netsuite_and_update_dhis2(primary_bank_payload,
         print("EXAMPLE 3: Get Bank Details")
         print("=" * 60)
     
-        result = get_bank_details(vendor_internal_id, "Primary")
+        result_primary = get_bank_details(vendor_internal_id, "Primary")
 
         #https://links.hispindia.org/ippf_uin/api/events/files?eventUid=MilMyjFj70Z&dataElementUid=R6nujxC6zLD
 
-        if result and result.get('success'):
-            for record in result['data']['records']:
+        if result_primary and result_primary.get('success'):
+            for record in result_primary['data']['records']:
                 print(f"\nRecord ID: {record['recordId']}")
                 print(f"Bank Name: {record['bankName']}")
                 print(f"Bank name: {record['name']}")
@@ -909,7 +925,29 @@ def create_vendor_in_netsuite_and_update_dhis2(primary_bank_payload,
             print("Error:", created_supplier_response.text)
             logging.error("Get Response Error for new vendor creation: ", created_supplier_response.text)
         
-        
+        result_secondray = get_bank_details(vendor_internal_id, "Secondary")
+
+        if result_secondray and result_secondray.get('success'):
+            for record in result_secondray['data']['records']:
+                print(f"\nRecord ID: {record['recordId']}")
+                print(f"Bank Name: {record['bankName']}")
+                print(f"Bank name: {record['name']}")
+                print(f"Account Number: {record['accountNumber']}")
+                print(f"Account Name: {record['accountName']}")
+                print(f"Bank Type: {record['bankType']}")
+                print(f"File Format Id: {record['fileFormatId']}")
+                print(f"iban: {record['iban']}")
+                print(f"swift: {record['swift']}")
+                print(f"isActive: {record['isActive']}")
+                print(f"subsidiaryId: {record['subsidiaryId']}")
+                #print(f"vendorName: {record['vendorName']}")
+                #print(f"country: {record['country']}")
+                
+        else:
+            print("Error:", created_supplier_response.text)
+            logging.error("Get Response Error for new vendor creation: ", created_supplier_response.text)
+
+
         logging.info("\n" + "STEP 1: Downlods file from source DHIS2")
         print("\n📋 STEP 1: Downlods file from source DHIS2")
 

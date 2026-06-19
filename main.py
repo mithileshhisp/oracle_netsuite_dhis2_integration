@@ -276,24 +276,81 @@ def main_with_logger():
                                 "custentity_ippf_uin_number": uin_code
                             }
                             
-                            bank_status = event_datavalues_dict_comp_check.get("vifE0qU6ird")
-                            if bank_status == "Active":
-                                is_active = True
+                            ## primary bank details
+                            primary_bank_payload = None
+                            bank_status_primary = event_datavalues_dict_comp_check.get("vifE0qU6ird")
+                            if bank_status_primary == "Active":
+                                is_active_primary = True
                             else:
-                                is_active = False
+                                is_active_primary = False
 
-                            primary_bank_payload = {
-                                "bankType": event_datavalues_dict_comp_check.get("LZK61Z8lv5J"),
-                                "isActive": is_active,
-                                "fileFormatId": option_code_attr_value_map[event_datavalues_dict_comp_check.get("VPHBgGSnGLB")],
-                                "address1" : event_datavalues_dict_comp_check.get("HTnwbE6NjXT"),
-                                "bankName": event_datavalues_dict_comp_check.get("cvI0Tq2uPjC"),
-                                "accountNumber" : event_datavalues_dict_comp_check.get("zB27tS5QtT0"),
-                                "iban": event_datavalues_dict_comp_check.get("z7sYWdtwtZo"),
-                                "swift": event_datavalues_dict_comp_check.get("ACstTNRg27W"),
-                                "bic": event_datavalues_dict_comp_check.get("ACstTNRg27W"),
-                                "subsidiaryId": primary_subsidiary_code,
-                            }
+                            primary_bank_file_format_id = option_code_attr_value_map.get(
+                                event_datavalues_dict_comp_check.get("VPHBgGSnGLB")
+                            )
+                            if primary_bank_file_format_id:
+                                primary_bank_payload = {
+                                    "bankType": event_datavalues_dict_comp_check.get("LZK61Z8lv5J"),
+                                    "isActive": is_active_primary,
+                                    #"fileFormatId": option_code_attr_value_map[event_datavalues_dict_comp_check.get("VPHBgGSnGLB")],
+                                    "fileFormatId": primary_bank_file_format_id,
+                                    "address1" : event_datavalues_dict_comp_check.get("HTnwbE6NjXT"),
+                                    "bankName": event_datavalues_dict_comp_check.get("cvI0Tq2uPjC"),
+                                    "accountNumber" : event_datavalues_dict_comp_check.get("zB27tS5QtT0"),
+                                    "iban": event_datavalues_dict_comp_check.get("z7sYWdtwtZo"),
+                                    "swift": event_datavalues_dict_comp_check.get("ACstTNRg27W"),
+                                    "bic": event_datavalues_dict_comp_check.get("ACstTNRg27W"),
+                                    "subsidiaryId": primary_subsidiary_code,
+                                }
+
+                            ## Secondary bank details 1
+                            secondary_bank_1_payload = None
+                            bank_status_sec_1 = event_datavalues_dict_comp_check.get("G1lb6B03Mxd")
+                            if bank_status_sec_1 == "Active":
+                                is_active_sec_1 = True
+                            else:
+                                is_active_sec_1 = False
+
+                            secondary_bank_1_file_format_id = option_code_attr_value_map.get(
+                                event_datavalues_dict_comp_check.get("oKam29mQNka")
+                            )
+                            if secondary_bank_1_file_format_id:
+                                secondary_bank_1_payload = {
+                                    "bankType": event_datavalues_dict_comp_check.get("vObNw2Z5dmW"),
+                                    "isActive": is_active_sec_1,
+                                    "fileFormatId": secondary_bank_1_file_format_id,
+                                    "address1" : event_datavalues_dict_comp_check.get("APTLXMxA1cm"),
+                                    "bankName": event_datavalues_dict_comp_check.get("CkulnRpyanv"),
+                                    "accountNumber" : event_datavalues_dict_comp_check.get("Y3leCd2J2zI"),
+                                    "iban": event_datavalues_dict_comp_check.get("WRmtb175yV9"),
+                                    "swift": event_datavalues_dict_comp_check.get("fJUzYvak2Gg"),
+                                    "bic": event_datavalues_dict_comp_check.get("fJUzYvak2Gg"),
+                                    "subsidiaryId": primary_subsidiary_code,
+                                }
+                            ## Secondary bank details 2
+                            secondary_bank_2_payload = None
+                            bank_status_sec_2 = event_datavalues_dict_comp_check.get("OFNDT3AARfk")
+                            if bank_status_sec_2 == "Active":
+                                is_active_sec_2 = True
+                            else:
+                                is_active_sec_2 = False
+
+                            secondary_bank_2_file_format_id = option_code_attr_value_map.get(
+                                event_datavalues_dict_comp_check.get("wka3cIbbtHY")
+                            )
+                            if secondary_bank_2_file_format_id:
+                                secondary_bank_2_payload = {
+                                    "bankType": event_datavalues_dict_comp_check.get("WtU54cCOwlw"),
+                                    "isActive": is_active_sec_2,
+                                    #"fileFormatId": option_code_attr_value_map[event_datavalues_dict_comp_check.get("wka3cIbbtHY")],
+                                    "fileFormatId": secondary_bank_2_file_format_id,
+                                    "address1" : event_datavalues_dict_comp_check.get("jcGWLrmhrZx"),
+                                    "bankName": event_datavalues_dict_comp_check.get("OHPBCB8PgSo"),
+                                    "accountNumber" : event_datavalues_dict_comp_check.get("aeWIoe8xqwj"),
+                                    "iban": event_datavalues_dict_comp_check.get("u5SxFrBVsEX"),
+                                    "swift": event_datavalues_dict_comp_check.get("GiP09GH9Cde"),
+                                    "bic": event_datavalues_dict_comp_check.get("GiP09GH9Cde"),
+                                    "subsidiaryId": primary_subsidiary_code,
+                                }
 
                             config = {
                                 "NETSUITE_URL": f"{NETSUITE_BASE_URL}/services/rest/record/v1/vendor",
@@ -307,14 +364,22 @@ def main_with_logger():
 
                             print("netsuite_payload :", netsuite_payload)
                             log_info(f"netsuite_payload  . { netsuite_payload }")
-                            print("primary_bank_payload :", primary_bank_payload)
-                            log_info(f"primary_bank_payload  . { primary_bank_payload }")
+                            if primary_bank_payload:
+                                print("primary_bank_payload :", primary_bank_payload)
+                                log_info(f"primary_bank_payload  . { primary_bank_payload }")
+                            if secondary_bank_1_payload:    
+                                print("secondary_bank_1_payload :", secondary_bank_1_payload)
+                                log_info(f"secondary_bank_1_payload  . { secondary_bank_1_payload }")
+                            if secondary_bank_2_payload:     
+                                print("secondary_bank_2_payload :", secondary_bank_2_payload)
+                                log_info(f"secondary_bank_2_payload  . { secondary_bank_2_payload }")
                             #create_vendor_and_sync_dhis2(netsuite_payload, tei, tei_uid,config, session_get)
-                            create_vendor_in_netsuite_and_update_dhis2(primary_bank_payload, netsuite_payload, 
-                                tei_uid, legal_name, tei_get_url, session_get, 
-                                UIN_SYNC_NETSUITE_DHIS2_ATTRIBUTE_UID, 
-                                event_get_url, latest_event_uin_control_uid,
-                                SUPPLIER_CODE_DE_UID, PROGRAM_UID, uin_code,REPORT_FILE_UPLOAD_DE_UID,tei)
+                            
+                            #create_vendor_in_netsuite_and_update_dhis2(primary_bank_payload, secondary_bank_1_payload, secondary_bank_2_payload, netsuite_payload, 
+                                #tei_uid, legal_name, tei_get_url, session_get, 
+                                #UIN_SYNC_NETSUITE_DHIS2_ATTRIBUTE_UID, 
+                                #event_get_url, latest_event_uin_control_uid,
+                                #SUPPLIER_CODE_DE_UID, PROGRAM_UID, uin_code,REPORT_FILE_UPLOAD_DE_UID,tei)
 
                         else:
                             print("supplier_category code is NULL or key not found")
